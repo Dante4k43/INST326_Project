@@ -10,7 +10,7 @@
 
 
 
-class analysis: #parent class
+class Analysis: #parent class
     """Produces analysis on NBA player statisitic 
     
         Attributes: 
@@ -62,7 +62,7 @@ class analysis: #parent class
   
   
     
-class team_stats(analysis):
+class Team_stats(Analysis):
     """Compares team statisitics in the NBA
     
     Attributes: 
@@ -109,7 +109,7 @@ class team_stats(analysis):
         
      
     
-class player_stats(analysis):
+class Player_stats(Analysis):
     """Compares player statisitics in the NBA
 
     Attributes: 
