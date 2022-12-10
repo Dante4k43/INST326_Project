@@ -8,7 +8,9 @@
 #GitHub CLI: gh repo clone Dante4k43/INST326_Project
 #
 
-
+import re
+import pandas as pd
+import sys
 
 class Analysis: #parent class
     """Produces analysis on NBA player statisitic 
@@ -20,35 +22,40 @@ class Analysis: #parent class
             rebounds (str): rebounds by team/player
             steals (str): steals point by team/player
     """
-    def __init__(self, filepath, name1):
-        """Initializes file path for data (Possible using webscraping)
+    def __init__(self, filepath):
+        """Initializes file path for data
         
-            Args::
+            Args:
             filepath(str): filepath containing NBA Statistics 
-                            (teams and players) *most likely a cvs file 
+                            (teams and players) a csv file 
         
-        """
+        """ 
+        self.df = pd.read_csv(filepath, sep=",", comment="#")
+        team_regex = r"(?i)\b(team)\b" 
+        player_regex = r"(?i)\b(player)\b"
+        team_sort_class = re.search(team_regex, filepath)    
+        player_sort_class = re.search(player_regex, filepath)
         
-    def stats(self):#points, assists, and percentage (used for players and teams)
-        """Displays statisitc regarding teams or players 
-        
-            Side effect: 
-            self.points: attribute of self would change 
-            self.assists: attribute of self would change
-            self.percentage: attribute of self would change
-            self.rebounds: attribute of self would change
-            self.steals: attribute of self would change 
-            
-            
-            Returns:
-            total_stat(str): displays statistics from everyone,
-                             (dictonary of tuples populated by str)
-        """
-        pass
+        if team_sort_class is not None:
+            return Team_stats(self.df)
+        elif player_sort_class is not None:
+            return Player_stats(self.df)
+        else:
+            raise ValueError('The file name is not named correctly, '
+                             'please include the word team or player '
+                             'for the correct analysis')
     
-    
-    def comparison(self, name2):
-        """Compares two items by stats
+    def stats(self, name1=False):
+        """Displays statisitc regarding teams or players from file in init 
+            method, option to view specific team or player available
+            
+            Args:
+            name1(str): name of player or team's stats user wants to view 
+        """
+        print(self.df.loc[self.df["FULL NAME"] == name1]) if name1 is not False else print(self.df)
+        
+    def comparison(self, name1, name2):
+        """Compares two items by stats from stats method (full stats)
 
         Args:
             name2 (str): name of team or player someone want to compare first name to
@@ -57,7 +64,16 @@ class Analysis: #parent class
         compared_stat (str): show the statistics of two items compared
         best(str): shows whos better out of the two items #counter
         """
-        pass
+        r1 = self.df.loc[self.df["FULL NAME"] == name1, "Rank"]
+        r2 = self.df.loc[self.df["FULL NAME"] == name2, "Rank"]
+        
+        if r1 < r2:
+            best = f"{name1} is ranked higher than {name2}"
+        elif r1 > r2:
+            best = f"{name2} is ranked higher than {name1}"
+        else:
+            best = "Both are equal."
+        print(best)
   
   
   
