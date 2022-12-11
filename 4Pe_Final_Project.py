@@ -23,36 +23,40 @@ class Analysis: #parent class
             steals (str): steals point by team/player
     """
     def __init__(self, filepath):
-        """Initializes file path for data
+        """Initializes file path for data (Possible using webscraping)
         
-            Args:
+            Args::
             filepath(str): filepath containing NBA Statistics 
-                            (teams and players) a csv file 
+                            (teams and players) *most likely a cvs file 
         
-        """ 
-        self.df = pd.read_csv(filepath, sep=",", comment="#")
-        team_regex = r"(?i)\b(team)\b" 
-        player_regex = r"(?i)\b(player)\b"
+        """
+        self.df = pd.read_csv(filepath, sep=",")
+            
+        team_regex = r"""(?i)(team)""" 
+        player_regex = r"""(?i)(player)"""
         team_sort_class = re.search(team_regex, filepath)    
         player_sort_class = re.search(player_regex, filepath)
         
         if team_sort_class is not None:
-            return Team_stats(self.df)
+            return Team_stats(self)
         elif player_sort_class is not None:
-            return Player_stats(self.df)
+            return Player_stats(self)
         else:
             raise ValueError('The file name is not named correctly, '
                              'please include the word team or player '
                              'for the correct analysis')
-    
-    def stats(self, name1=False):
+          
+        
+    def stats(self, name1 = False):
         """Displays statisitc regarding teams or players from file in init 
             method, option to view specific team or player available
             
-            Args:
+            Args::
             name1(str): name of player or team's stats user wants to view 
         """
-        print(self.df.loc[self.df["FULL NAME"] == name1]) if name1 is not False else print(self.df)
+        [print(self.df.loc[self.df["FULL NAME"] == name1]) if 
+         name1 is not False else print(self.df)]
+        #full name
         
     def comparison(self, name1, name2):
         """Compares two items by stats from stats method (full stats)
