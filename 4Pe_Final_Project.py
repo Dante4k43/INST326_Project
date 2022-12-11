@@ -8,6 +8,7 @@
 #GitHub CLI: gh repo clone Dante4k43/INST326_Project
 #
 
+from argparse import ArgumentParser
 import re
 import pandas as pd
 import sys
@@ -164,7 +165,23 @@ class Player_stats(Analysis):
         """
         pass
     
-#def main() needed?
+def parse_args(arglist):
+    
+    parser = ArgumentParser()
+    parser.add_argument("filepath", help="path to stat csv file")
+    parser.add_argument("-n1", "--name1", help="player names")
+    parser.add_argument("-n2","--name2", help="player names")
 
-if __name__ == "__main__": 
-    pass
+    return parser.parse_args(arglist)
+
+def main(filepath, name1 = False, name2 = False):
+    analyze = Analysis(filepath, name1, name2)
+    print(analyze)
+
+
+if __name__ == "__main__":
+    try:
+        args = parse_args(sys.argv[1:])
+    except ValueError as e:
+        sys.exit(str(e))
+    main(args.filepath, args.name1, args.name2)
