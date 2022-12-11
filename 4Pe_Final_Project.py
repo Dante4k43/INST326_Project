@@ -26,12 +26,12 @@ class Analysis: #parent class
     def __init__(self, filepath):
         """Initializes file path for data (Possible using webscraping)
         
-            Args::
+            Args:
             filepath(str): filepath containing NBA Statistics 
                             (teams and players) *most likely a cvs file 
         
         """
-        self.df = pd.read_csv(filepath, sep=",")
+        self.df = pd.read_csv(filepath, sep=",", comment="#")
             
         team_regex = r"""(?i)(team)""" 
         player_regex = r"""(?i)(player)"""
@@ -46,7 +46,6 @@ class Analysis: #parent class
             raise ValueError('The file name is not named correctly, '
                              'please include the word team or player '
                              'for the correct analysis')
-          
         
     def stats(self, name1 = False):
         """Displays statisitc regarding teams or players from file in init 
@@ -55,9 +54,9 @@ class Analysis: #parent class
             Args::
             name1(str): name of player or team's stats user wants to view 
         """
-        [print(self.df.loc[self.df["FULL NAME"] == name1]) if 
+        self.df = pd.read_csv("demo.csv", sep=",", comment="#")
+        [print(self.df.loc[self.df["NAME"] == name1]) if 
          name1 is not False else print(self.df)]
-        #full name
         
     def comparison(self, name1, name2):
         """Compares two items by stats from stats method (full stats)
@@ -69,9 +68,16 @@ class Analysis: #parent class
         compared_stat (str): show the statistics of two items compared
         best(str): shows whos better out of the two items #counter
         """
-        r1 = self.df.loc[self.df["FULL NAME"] == name1, "Rank"]
-        r2 = self.df.loc[self.df["FULL NAME"] == name2, "Rank"]
+        self.df = pd.read_csv("demo.csv", sep=",", comment="#")
         
+        self.df = self.df.reset_index(drop=True)
+        
+        row_number1 = self.df[self.df["NAME"] == name1].index
+        row_number2 = self.df[self.df["NAME"] == name2].index
+        
+        r1 = str(self.df.loc[row_number1]["RANK"])
+        r2 = str(self.df.loc[row_number2]["RANK"])
+                
         if r1 < r2:
             best = f"{name1} is ranked higher than {name2}"
         elif r1 > r2:
