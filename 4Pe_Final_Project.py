@@ -51,10 +51,10 @@ class Analysis: #parent class
         """Displays statisitc regarding teams or players from file in init 
             method, option to view specific team or player available
             
-            Args::
+            Args:
             name1(str): name of player or team's stats user wants to view 
         """
-        self.df = pd.read_csv("demo.csv", sep=",", comment="#")
+        self.df = pd.read_csv("player_stats.csv", sep=",", comment="#")
         [print(self.df.loc[self.df["NAME"] == name1]) if 
          name1 is not False else print(self.df)]
         
@@ -62,13 +62,13 @@ class Analysis: #parent class
         """Compares two items by stats from stats method (full stats)
 
         Args:
-            name2 (str): name of team or player someone want to compare first name to
+            name1 (str): name of the first team or player to be compared
+            name2 (str): name of the second team or player to be compared
             
         Return:
-        compared_stat (str): show the statistics of two items compared
-        best(str): shows whos better out of the two items #counter
+            best(str): shows which of the two items is better
         """
-        self.df = pd.read_csv("demo.csv", sep=",", comment="#")
+        self.df = pd.read_csv("player_stats.csv", sep=",", comment="#")
         
         self.df = self.df.reset_index(drop=True)
         
@@ -84,9 +84,7 @@ class Analysis: #parent class
             best = f"{name2} is ranked higher than {name1}"
         else:
             best = "Both are equal."
-        print(best)
-  
-  
+        return best
   
     
 class Team_stats(Analysis):
@@ -151,7 +149,7 @@ class Player_stats(Analysis):
         """Determines tops players based on attributes from analysis class
         
         Return:
-        t_player: best players 
+        t_player (list): best players 
         """
         pass
     
@@ -159,17 +157,37 @@ class Player_stats(Analysis):
         """Determines bottom players based on attributes from analysis class
         
         Return:
-        b_player: worst players 
+        b_player (list): worst players 
         """
         pass
     
     def mvp_predict(self):
-        """Determines MVP prediction based on top_player
+        """Determines MVP prediction based on each player's versatility index.
         
-        Return: 
-        mvp_predict: mvp prediction #counter for better stats
+        Returns:
+            name(str): the name of the player most likely to be named mvp.
+        
+        Side effects:
+            Plots a barplot predicting the likelihood each player becoming an
+            mvp based on their versatility.
+            Prints out the name of the player most likely to be named mvp to
+            the console.
         """
-        pass
+        
+        self.df = pd.read_csv("player_stats.csv", sep=",", comment="#")
+        
+        df_new = self.df[["NAME", "VI"]]
+        df_new[df_new["VI"] > 12.5].plot.bar(x="NAME", y="VI")
+
+        vi_max = df_new["VI"].max()
+        mvp = str(df_new.loc[df_new["VI"] == vi_max]["NAME"])
+        space1 = mvp.find(" ", 7)
+        space2 = mvp.find("\n", space1)
+        name = mvp[7: space2]
+        
+        print(f"{name} is the most likely to be named most valuable player.")
+        
+        return name
     
 def parse_args(arglist):
     
