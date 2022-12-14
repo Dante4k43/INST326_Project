@@ -102,8 +102,9 @@ class Team_stats(Analysis):
     def best_offense(self):
         """Finds the top 5 offensive teams
         
-        returns
-        best_o: returns result of top 5 best offensive teams.
+        Side Effects:
+        Creates a new Dataframe called best_o.
+        best_o: Prints out result of top 5 best offensive teams.
         """
         self.df = pd.read_csv("team_stats.csv", sep=",", comment="#")
         best_o = self.df.groupby("NAME")[['FG%','FT%','ORB','AST']].max().reset_index().sort_values(["FG%"], ascending = False)
@@ -114,12 +115,13 @@ class Team_stats(Analysis):
     def best_defense(self):
         """Finds the top 5 defensive teams
         
-        returns
-        best_d: returns result of top 5 best defensive teams.
+        Side Effects:
+        Creates a new Dataframe called best_d.
+        best_d: Prints out result of top 5 best defensive teams.
         """
         self.df = pd.read_csv("team_stats.csv", sep=",", comment="#")
-        groupedd_stats = self.df.groupby("NAME")[['DRB','STL','BLK']].max().reset_index().sort_values(["FG%"], ascending = False)
-        print(f"{groupedd_stats.head()} \n\n These are the top 5 best defensive teams!")
+        best_d = self.df.groupby("NAME")[['DRB','STL','BLK']].max().reset_index().sort_values(["DRB"], ascending = False)
+        print(f"{best_d.head()} \n\n These are the top 5 best defensive teams!")
         
     def best_team(self): #by division
         """Finds the best team overall
