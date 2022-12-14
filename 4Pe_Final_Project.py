@@ -100,28 +100,30 @@ class Team_stats(Analysis):
     
     
     def best_offense(self):
-        """Finds the top 5 offensive teams
+        """Display the top 5 offensive teams and the best offensive team.
         
         Side Effects:
-        Creates a new Dataframe called best_o.
-        best_o: Prints out result of top 5 best offensive teams.
+            Creates a new Dataframe called dfo that has top 5 offensive teams.
         """
         self.df = pd.read_csv("team_stats.csv", sep=",", comment="#")
-        best_o = self.df.groupby("NAME")[['FG%','FT%','ORB','AST']].max().reset_index().sort_values(["FG%"], ascending = False)
-        print(f"{best_o.head()} \n\n These are the top 5 best offensive teams!")
+        dfo = self.df.groupby("NAME")[['FG%','FT%','ORB','AST','RANK']].max().reset_index().sort_values(["FG%"], ascending = False)
+        best_o = dfo.iloc[0]
+        print (f"This is the highest rated offensive team based on the stats displayed! \n\n{best_o.to_string(index =True)}\n")
+        print(f"These are the top 5 best offensive teams! \n\n{dfo.head().to_string(index = False)} \n\n")
     
 
         
     def best_defense(self):
-        """Finds the top 5 defensive teams
+        """Displays the top 5 defensive teams and the best defensive team.
         
         Side Effects:
-        Creates a new Dataframe called best_d.
-        best_d: Prints out result of top 5 best defensive teams.
+            Creates a new Dataframe called dfd that has top 5 defensive teams.
         """
         self.df = pd.read_csv("team_stats.csv", sep=",", comment="#")
-        best_d = self.df.groupby("NAME")[['DRB','STL','BLK']].max().reset_index().sort_values(["DRB"], ascending = False)
-        print(f"{best_d.head()} \n\n These are the top 5 best defensive teams!")
+        dfd = self.df.groupby("NAME")[['DRB','STL','BLK','RANK']].max().reset_index().sort_values(["DRB"], ascending = False)
+        best_d = dfd.iloc[0]
+        print (f"This is the highest rated defensive team based on the stats displayed! \n\n{best_d.to_string(index =True)}\n")
+        print(f"These are the top 5 best defensive teams! \n\n{dfd.head().to_string(index = False)} \n\n")
         
     def best_team(self): #by division
         """Finds the best team overall
