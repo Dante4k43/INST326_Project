@@ -66,7 +66,7 @@ class Analysis: #parent class
             name2 (str): name of the second team or player to be compared
             
         Return:
-            best(str): shows which of the two items is better
+            str: shows which of the two items is better
         """
         self.df = pd.read_csv("player_stats.csv", sep=",", comment="#")
         
@@ -175,13 +175,13 @@ class Player_stats(Analysis):
         """Determines MVP prediction based on each player's versatility index.
         
         Returns:
-            name(str): the name of the player most likely to be named mvp.
+            str: the name of the player most likely to be named mvp.
         
         Side effects:
             Plots a barplot predicting the likelihood each player becoming an
             mvp based on their versatility.
             Prints out the name of the player most likely to be named mvp to
-            the console.
+            stdout.
         """
         
         self.df = pd.read_csv("player_stats.csv", sep=",", comment="#")
@@ -195,9 +195,8 @@ class Player_stats(Analysis):
         space2 = mvp.find("\n", space1)
         name = mvp[7: space2]
         
-        print(f"{name} is the most likely to be named most valuable player.")
-        
-        return name
+        return print(f"{name} is the most likely to be named most valuable "
+                     "player.")
     
 def parse_args(arglist):
     
