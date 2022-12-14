@@ -201,8 +201,8 @@ def parse_args(arglist):
     
     parser = ArgumentParser()
     parser.add_argument("filepath", help="path to stat csv file")
-    parser.add_argument("-n1", "--name1", help="player names")
-    parser.add_argument("-n2","--name2", help="player names")
+    parser.add_argument("name1", help="player names")
+    parser.add_argument("name2", help="player names")
 
     return parser.parse_args(arglist)
 
