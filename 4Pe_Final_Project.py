@@ -125,25 +125,37 @@ class Team_stats(Analysis):
         print (f"This is the highest rated defensive team based on the stats displayed! \n\n{best_d.to_string(index =True)}\n")
         print(f"These are the top 5 best defensive teams! \n\n{dfd.head().to_string(index = False)} \n\n")
         
-    def best_team(self): #by division
-        """Finds the best team overall
+    def best_team(self): #by division 
+        """Finds the top 5 teams
         
-        returns
-        best_overall: returns result of best team overall (both offense and defense)
+        Side Effect:
+            new data frame created called best, contains the top 5 teams of the csv.
         """
-        pass
-        
+        df = pd.read_csv("team_stats.csv")
+        for col in df:
+            if "PTS" not in df:
+                print("Need a PTS Column to read; Need 'NAME' and 'PTS' columns")
+                pass
+            elif "NAME" not in df:
+                print("Need a NAME Column to read; Need 'NAME' and 'PTS' columns")
+                pass
+            else:
+                best = df.groupby('NAME')['PTS'].max().reset_index().sort_values(['PTS'], ascending=False)[:5]      
+                print(f"Top 5 best teams are:\n{best}\n")  
+                break   
+   
     def worst_team(self):#by division
-        """Finds the worst team overall
+        """Finds the bottom 5 teams
         
-        returns
-        worst_overall: returns result of worst team overall (both offense and defense)
+        Side Effect:
+            new data frame created called worst, contains the bottom 5 teams of the csv.
         """
-        pass
+        df = pd.read_csv("team_stats.csv")
+        worst = df.groupby('NAME')['PTS'].max().reset_index().sort_values(['PTS'])[:5]
+        point = 'PTS'
+        print(f"Top 5 best worst are:\n{worst}\n") if point in df else print("Need PTS")
         
         
-     
-    
 class Player_stats(Analysis):
     """Compares player statisitics in the NBA
 
