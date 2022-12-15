@@ -173,7 +173,25 @@ class Player_stats(Analysis):
         Return:
         t_player (list): best players 
         """
-        pass
+
+        self.df = pd.read_csv("player_stats.csv", sep = ",", comment = "#")
+        
+        df_best = self.df[["NAME", "PPG", "APG", "RPG"]]
+        
+        self.best_points = []
+        
+        for row in df_best.rows: 
+            name = df_best.loc[row, "NAME"]
+            ppg = df_best.loc[row, "PPG"]
+            apg = df_best.loc[row, "APG"]
+            rpg = df_best.loc[row, "RPG"]
+            total_points = (ppg + apg + rpg) / 3 
+            self.best_points.append((name, total_points)) 
+            
+        self.best_sorted = sorted(self.best_points, key = lambda x: x[1],\
+                                    reverse = True)[:5]
+        
+        print(f"These are the best players in the league.\n")
     
     def bottom_players(self):
         """Determines bottom players based on attributes from analysis class
@@ -181,7 +199,34 @@ class Player_stats(Analysis):
         Return:
         b_player (list): worst players 
         """
-        pass
+                
+        self.df = pd.read_csv("player_stats.csv", sep = ",", comment  ="#")
+        
+        df_best = self.df[["NAME", "PPG", "APG", "RPG"]]
+        
+        self.best_points = []
+        
+        for row in df_best.rows: 
+            name = df_best.loc[row, "NAME"]
+            ppg = df_best.loc[row, "PPG"]
+            apg = df_best.loc[row, "APG"]
+            rpg = df_best.loc[row, "RPG"]
+            total_points = (ppg + apg + rpg) / 3 
+            self.best_points.append((name, total_points)) 
+            
+        self.best_sorted = sorted(self.best_points, key = lambda x: x[1],\
+                                    reverse = False)[:5]
+        
+        print(f"These are the worst players in the league.\n")
+        
+    def __str__(self): 
+        """prints out the top or bottom 5 names of players from best_points
+
+        Returns:
+        str: the names of top or bottom 5 players 
+        """
+        return f"{self.best_sorted}"
+    print(__str__())
     
     def mvp_predict(self):
         """Determines MVP prediction based on each player's versatility index.
