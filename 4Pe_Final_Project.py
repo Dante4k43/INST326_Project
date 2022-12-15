@@ -13,52 +13,48 @@ import re
 import pandas as pd
 import sys
 
-class Analysis:
-    """Produces analysis on NBA player statisitic.
+class Analysis: 
+    """Produces analysis on NBA player statisitic. 
     
         Attributes: 
-            points (str): point by team/player
-            assists (str): assists by team/player
-            percentage (str): percnetage by team/player
-            rebounds (str): rebounds by team/player
-            steals (str): steals point by team/player
+            df (str): dataframe from csv file.
+            name1 (str): first name of team/player (optional).
+            name2 (str): second name of team/player (optional).
+
     """
-    def __init__(self, filepath):
-        """Initializes file path for data (Possible using webscraping).
+    def __init__(self, filepath, name1 = False, name2 = False):                     
+        """Initializes file path for data.
         
             Args:
             filepath(str): filepath containing NBA Statistics 
-                            (teams and players) *most likely a cvs file.
-        
+                            (teams and players), must be a cvs file. 
+            name1 (str): first name of team/player (optional but must be full).
+            name2 (str): second name of team/player (optional but must be full).
         """
-        self.df = pd.read_csv(filepath, sep=",", comment="#")
+        with open(filepath, "r", encoding="utf-8") as file:
+            df = pd.read_csv(file, sep=",")
+            self.df = df
+            self.name1= name1
+            self.name2 = name2
             
-        team_regex = r"""(?i)(team)""" 
-        player_regex = r"""(?i)(player)"""
-        team_sort_class = re.search(team_regex, filepath)    
-        player_sort_class = re.search(player_regex, filepath)
+        self.stats()
+        self.comparison()
         
-        if team_sort_class is not None:
-            return Team_stats(self)
-        elif player_sort_class is not None:
-            return Player_stats(self)
-        else:
-            raise ValueError('The file name is not named correctly, '
-                             'please include the word team or player '
-                             'for the correct analysis')
+          
         
-    def stats(self, name1 = False):
+    def stats(self):
         """Displays statisitc regarding teams or players from file in init 
             method, option to view specific team or player available.
             
             Args:
-            name1(str): name of player or team's stats user wants to view.
+            name1(str): name of player or team's stats user wants to view. 
         """
-        self.df = pd.read_csv("player_stats.csv", sep=",", comment="#")
-        [print(self.df.loc[self.df["NAME"] == name1]) if 
-         name1 is not False else print(self.df)]
+        if self.name1 is not False and self.name2 is False:
+            print(self.df.loc[self.df.iloc[:,1] == self.name1]) 
+        else:
+            print(self.df)
         
-    def comparison(self, name1, name2):
+    def comparison(self):
         """Compares two items by stats from stats method (full stats).
 
         Args:
@@ -67,35 +63,29 @@ class Analysis:
             
         Return:
             str: shows which of the two items is better.
-        """
-        self.df = pd.read_csv("player_stats.csv", sep=",", comment="#")
+        """        
+        compare = self.df
         
-        self.df = self.df.reset_index(drop=True)
+        #Boolean Indexing
+       
+        r1 = str(compare.loc[compare.iloc[:,1] == self.name1]) 
+        r2 = str(compare.loc[compare.iloc[:,1] == self.name2])
         
-        row_number1 = self.df[self.df["NAME"] == name1].index
-        row_number2 = self.df[self.df["NAME"] == name2].index
         
-        r1 = str(self.df.loc[row_number1]["RANK"])
-        r2 = str(self.df.loc[row_number2]["RANK"])
-                
-        if r1 < r2:
-            best = f"{name1} is ranked higher than {name2}"
-        elif r1 > r2:
-            best = f"{name2} is ranked higher than {name1}"
+        if self.name1 is not False and self.name2 is not False:        
+            print(r1)
+            print(r2) 
         else:
-            best = "Both are equal."
-        return best
+            pass
+    
+    
   
     
 class Team_stats(Analysis):
     """Compares team statisitics in the NBA.
     
     Attributes: 
-            points (str): point by team/player
-            assists (str): assists by team/player
-            percentage (str): percnetage by team/player
-            rebounds (str): rebounds by team/player
-            steals (str): steals point by team/player
+            df (str): dataframe from csv file.
     """
     
     
@@ -105,7 +95,6 @@ class Team_stats(Analysis):
         Side Effects:
             Creates a new Dataframe called dfo that has top 5 offensive teams.
         """
-        self.df = pd.read_csv("team_stats.csv", sep=",", comment="#")
         dfo = (self.df.groupby("NAME")[['FG%','FT%','ORB','AST','RANK']]
                .max().reset_index().sort_values(["FG%"], ascending = False))
         best_o = dfo.iloc[0]
@@ -124,7 +113,6 @@ class Team_stats(Analysis):
         Side Effects:
             Creates a new Dataframe called dfd that has top 5 defensive teams.
         """
-        self.df = pd.read_csv("team_stats.csv", sep=",", comment="#")
         #Grouby Method (Line 129)
         dfd = (self.df.groupby("NAME")[['DRB','STL','BLK','RANK']] 
                .max().reset_index().sort_values(["DRB"], ascending = False))
@@ -141,7 +129,6 @@ class Team_stats(Analysis):
             new data frame created called best, contains the top 5
             teams of the csv.
         """
-        self.df = pd.read_csv("team_stats.csv")
         for col in self.df:
             if "PTS" not in self.df:
                 print("Need a PTS Column to read; Need 'NAME'"
@@ -163,7 +150,6 @@ class Team_stats(Analysis):
             new data frame created called worst, contains the bottom 5 
             teams of the csv.
         """
-        self.df = pd.read_csv("team_stats.csv")
         worst = (self.df.groupby('NAME')['PTS'].max().reset_index()
                  .sort_values(['PTS'])[:5])
         point = 'PTS'
@@ -176,22 +162,15 @@ class Player_stats(Analysis):
     """Compares player statisitics in the NBA.
 
     Attributes: 
-            points (str): point by team/player
-            assists (str): assists by team/player
-            percentage (str): percnetage by team/player
-            rebounds (str): rebounds by team/player
-            steals (str): steals point by team/player
+            df (str): dataframe from csv file.
     """
-        
+ 
     def top_players(self):
         """Determines top players based on attributes from analysis class.
         
         Return:
         t_player (list): best players 
-        """
-
-        self.df = pd.read_csv("player_stats.csv", sep = ",", comment = "#")
-        
+        """        
         df_best = self.df[["NAME", "PPG", "APG", "RPG"]]
         
         self.best_points = []
@@ -214,10 +193,7 @@ class Player_stats(Analysis):
         
         Return:
         b_player (list): worst players 
-        """
-                
-        self.df = pd.read_csv("player_stats.csv", sep = ",", comment  ="#")
-        
+        """        
         df_best = self.df[["NAME", "PPG", "APG", "RPG"]]
         
         self.best_points = []
@@ -242,7 +218,7 @@ class Player_stats(Analysis):
         str: the names of top or bottom 5 players.
         """
         return f"{self.best_sorted}"
-    print(__str__())
+        
     
     def mvp_predict(self):
         """Determines MVP prediction based on each player's versatility index.
@@ -256,9 +232,7 @@ class Player_stats(Analysis):
             Prints out the name of the player most likely to be named mvp to
             stdout.
         """
-        
-        self.df = pd.read_csv("player_stats.csv", sep=",", comment="#")
-        
+                
         df_new = self.df[["NAME", "VI"]]
         df_new[df_new["VI"] > 12.5].plot.bar(x="NAME", y="VI") #Pyplot
 
@@ -271,21 +245,62 @@ class Player_stats(Analysis):
         return print(f"{name} is the most likely to be named most valuable "
                      "player.")
     
-def parse_args(arglist):
-    
-    parser = ArgumentParser()
-    parser.add_argument("filepath", help="path to stat csv file")
-    parser.add_argument("name1", help="player names")
-    parser.add_argument("name2", help="player names")
-
-    return parser.parse_args(arglist)
-
 def main(filepath, name1 = False, name2 = False):
-    analyze = Analysis(filepath, name1, name2)
-    print(analyze)
+    """Displays key statisitics of dataframe, player, or team.
+    
+        Args:
+            filepath(str): filepath containing NBA Statistics 
+                            (teams and players), must be a cvs file. 
+            name1 (str): first name of team/player (optional).
+            name2 (str): second name of team/player (optional).
+    """
+    team_regex = r"""(?i)team"""        #Regex section from here until line 182
+    player_regex = r"""(?i)player"""
+    team_sort_class = re.search(team_regex, filepath)                           
+    player_sort_class = re.search(player_regex, filepath)       
+    
+    
+    if team_sort_class is not None:
+        return Team_stats(filepath, name1, name2)
+
+    elif player_sort_class is not None:
+        return Player_stats(filepath, name1, name2)
+    else:                                                                           
+        raise ValueError('The file name is not named correctly, '               
+                             'please include the word team or player '
+                             'for the correct analysis')
+    
+    
+def parse_args(arglist): #Argument Parser Class
+    """Parse and validate command-line arguments.
+    
+    This function expects the following required arguments
+        filepath (str): the filepath/file of a csv.
+        
+    This function also allows the following optional arguments:
+        name1 (str): name of team/player to compare or look up stats.
+        name2 (str): name of team/player compaing to name1.
+    
+    Args:
+        arglist (list of str): list of command-line arguments.
+    
+    Returns:
+        namespace: the parsed arguments (see argparse documentation for
+        more information).
+    
+    Raises:
+        TypeError: encountered an invalid argument.
+    """
+    parser = ArgumentParser()
+    parser.add_argument("filepath", type= str, help="path to stat csv file")        
+    parser.add_argument("-name1",type= str, default= False, help="player names")
+    parser.add_argument("-name2",type=str, default= False,help="player names")
+
+    args = parser.parse_args(arglist)                                               
+    return args
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":                                                          
     try:
         args = parse_args(sys.argv[1:])
     except ValueError as e:
