@@ -13,8 +13,8 @@ import re
 import pandas as pd
 import sys
 
-class Analysis: #parent class
-    """Produces analysis on NBA player statisitic 
+class Analysis:
+    """Produces analysis on NBA player statisitic.
     
         Attributes: 
             points (str): point by team/player
@@ -24,11 +24,11 @@ class Analysis: #parent class
             steals (str): steals point by team/player
     """
     def __init__(self, filepath):
-        """Initializes file path for data (Possible using webscraping)
+        """Initializes file path for data (Possible using webscraping).
         
             Args:
             filepath(str): filepath containing NBA Statistics 
-                            (teams and players) *most likely a cvs file 
+                            (teams and players) *most likely a cvs file.
         
         """
         self.df = pd.read_csv(filepath, sep=",", comment="#")
@@ -49,24 +49,24 @@ class Analysis: #parent class
         
     def stats(self, name1 = False):
         """Displays statisitc regarding teams or players from file in init 
-            method, option to view specific team or player available
+            method, option to view specific team or player available.
             
             Args:
-            name1(str): name of player or team's stats user wants to view 
+            name1(str): name of player or team's stats user wants to view.
         """
         self.df = pd.read_csv("player_stats.csv", sep=",", comment="#")
         [print(self.df.loc[self.df["NAME"] == name1]) if 
          name1 is not False else print(self.df)]
         
     def comparison(self, name1, name2):
-        """Compares two items by stats from stats method (full stats)
+        """Compares two items by stats from stats method (full stats).
 
         Args:
-            name1 (str): name of the first team or player to be compared
-            name2 (str): name of the second team or player to be compared
+            name1 (str): name of the first team or player to be compared.
+            name2 (str): name of the second team or player to be compared.
             
         Return:
-            str: shows which of the two items is better
+            str: shows which of the two items is better.
         """
         self.df = pd.read_csv("player_stats.csv", sep=",", comment="#")
         
@@ -88,7 +88,7 @@ class Analysis: #parent class
   
     
 class Team_stats(Analysis):
-    """Compares team statisitics in the NBA
+    """Compares team statisitics in the NBA.
     
     Attributes: 
             points (str): point by team/player
@@ -106,10 +106,15 @@ class Team_stats(Analysis):
             Creates a new Dataframe called dfo that has top 5 offensive teams.
         """
         self.df = pd.read_csv("team_stats.csv", sep=",", comment="#")
-        dfo = self.df.groupby("NAME")[['FG%','FT%','ORB','AST','RANK']].max().reset_index().sort_values(["FG%"], ascending = False)
+        dfo = (self.df.groupby("NAME")[['FG%','FT%','ORB','AST','RANK']]
+               .max().reset_index().sort_values(["FG%"], ascending = False))
         best_o = dfo.iloc[0]
-        print (f"This is the highest rated offensive team based on the stats displayed! \n\n{best_o.to_string(index =True)}\n")
-        print(f"These are the top 5 best offensive teams! \n\n{dfo.head().to_string(index = False)} \n\n")
+        print(f"This is the highest rated offensive team based on the stats "
+              f"displayed! \n\n{best_o.to_string(index =True)}\n")
+        #Keyword Argument (Line 116)
+        print(f"These are the top 5 best offensive teams!"
+              f"\n\n{dfo.head().to_string(index = False)} \n\n")
+        
     
 
         
@@ -120,44 +125,55 @@ class Team_stats(Analysis):
             Creates a new Dataframe called dfd that has top 5 defensive teams.
         """
         self.df = pd.read_csv("team_stats.csv", sep=",", comment="#")
-        dfd = self.df.groupby("NAME")[['DRB','STL','BLK','RANK']].max().reset_index().sort_values(["DRB"], ascending = False)
+        #Grouby Method (Line 129)
+        dfd = (self.df.groupby("NAME")[['DRB','STL','BLK','RANK']] 
+               .max().reset_index().sort_values(["DRB"], ascending = False))
         best_d = dfd.iloc[0]
-        print (f"This is the highest rated defensive team based on the stats displayed! \n\n{best_d.to_string(index =True)}\n")
-        print(f"These are the top 5 best defensive teams! \n\n{dfd.head().to_string(index = False)} \n\n")
+        print(f"This is the highest rated defensive team based on the stats "
+             f"displayed! \n\n{best_d.to_string(index =True)}\n")
+        print(f"These are the top 5 best defensive teams!"
+              f"\n\n{dfd.head().to_string(index = False)} \n\n")
         
-    def best_team(self): #by division 
-        """Finds the top 5 teams
+    def best_team(self):  
+        """Finds the top 5 teams.
         
         Side Effect:
-            new data frame created called best, contains the top 5 teams of the csv.
+            new data frame created called best, contains the top 5
+            teams of the csv.
         """
-        df = pd.read_csv("team_stats.csv")
-        for col in df:
-            if "PTS" not in df:
-                print("Need a PTS Column to read; Need 'NAME' and 'PTS' columns")
-                pass
-            elif "NAME" not in df:
-                print("Need a NAME Column to read; Need 'NAME' and 'PTS' columns")
-                pass
+        self.df = pd.read_csv("team_stats.csv")
+        for col in self.df:
+            if "PTS" not in self.df:
+                print("Need a PTS Column to read; Need 'NAME'"
+                      + "and 'PTS' columns")
+            elif "NAME" not in self.df:
+                print("Need a NAME Column to read; Need 'NAME'"
+                      + "and 'PTS' columns")
             else:
-                best = df.groupby('NAME')['PTS'].max().reset_index().sort_values(['PTS'], ascending=False)[:5]      
+                best = (self.df.groupby('NAME')['PTS'].max().reset_index()
+                        .sort_values(['PTS'], ascending=False)[:5]) 
+                #Fstring (Line 156)  
                 print(f"Top 5 best teams are:\n{best}\n")  
                 break   
    
-    def worst_team(self):#by division
-        """Finds the bottom 5 teams
+    def worst_team(self):
+        """Finds the bottom 5 teams.
         
         Side Effect:
-            new data frame created called worst, contains the bottom 5 teams of the csv.
+            new data frame created called worst, contains the bottom 5 
+            teams of the csv.
         """
-        df = pd.read_csv("team_stats.csv")
-        worst = df.groupby('NAME')['PTS'].max().reset_index().sort_values(['PTS'])[:5]
+        self.df = pd.read_csv("team_stats.csv")
+        worst = (self.df.groupby('NAME')['PTS'].max().reset_index()
+                 .sort_values(['PTS'])[:5])
         point = 'PTS'
-        print(f"Top 5 best worst are:\n{worst}\n") if point in df else print("Need PTS")
+        #Conditional Expression (Line 171-172)
+        print((f"Top 5 best worst are:\n{worst}\n") if point in self.df
+              else print("Need PTS"))
         
         
 class Player_stats(Analysis):
-    """Compares player statisitics in the NBA
+    """Compares player statisitics in the NBA.
 
     Attributes: 
             points (str): point by team/player
@@ -168,7 +184,7 @@ class Player_stats(Analysis):
     """
         
     def top_players(self):
-        """Determines tops players based on attributes from analysis class
+        """Determines top players based on attributes from analysis class.
         
         Return:
         t_player (list): best players 
@@ -194,7 +210,7 @@ class Player_stats(Analysis):
         print(f"These are the best players in the league.\n")
     
     def bottom_players(self):
-        """Determines bottom players based on attributes from analysis class
+        """Determines bottom players based on attributes from analysis class.
         
         Return:
         b_player (list): worst players 
@@ -213,17 +229,17 @@ class Player_stats(Analysis):
             rpg = df_best.loc[row, "RPG"]
             total_points = (ppg + apg + rpg) / 3 
             self.best_points.append((name, total_points)) 
-            
+        #Lambda Expression (Line 233)
         self.best_sorted = sorted(self.best_points, key = lambda x: x[1],\
                                     reverse = False)[:5]
         
         print(f"These are the worst players in the league.\n")
         
-    def __str__(self): 
-        """prints out the top or bottom 5 names of players from best_points
+    def __str__(self): #Magic Method
+        """Prints out the top or bottom 5 names of players from best_points.
 
         Returns:
-        str: the names of top or bottom 5 players 
+        str: the names of top or bottom 5 players.
         """
         return f"{self.best_sorted}"
     print(__str__())
@@ -244,7 +260,7 @@ class Player_stats(Analysis):
         self.df = pd.read_csv("player_stats.csv", sep=",", comment="#")
         
         df_new = self.df[["NAME", "VI"]]
-        df_new[df_new["VI"] > 12.5].plot.bar(x="NAME", y="VI")
+        df_new[df_new["VI"] > 12.5].plot.bar(x="NAME", y="VI") #Pyplot
 
         vi_max = df_new["VI"].max()
         mvp = str(df_new.loc[df_new["VI"] == vi_max]["NAME"])
